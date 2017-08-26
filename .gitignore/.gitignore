@@ -1,0 +1,83 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct tNode
+{
+	int data;
+	struct tNode* left;
+	struct tNode* right;
+};
+
+void MorrisTraversal(struct tNode *root)
+{
+	struct tNode *current, *pre;
+
+	if (root == NULL)
+		return;
+
+	current = root;
+	while (current != NULL)
+	{
+		if (current->left == NULL)
+		{
+			printf(" %d ", current->data);
+			current = current->right;
+		}
+		else
+		{
+			/* 找到current的前驱节点 */
+			pre = current->left;
+			while (pre->right != NULL && pre->right != current)
+				pre = pre->right;
+
+			/* 将current节点作为其前驱节点的右孩子 */
+			if (pre->right == NULL)
+			{
+				pre->right = current;
+				current = current->left;
+			}
+
+			/* 恢复树的原有结构，更改right 指针 */
+			else
+			{
+				pre->right = NULL;
+				printf(" %d ", current->data);
+				current = current->right;
+			} /* End of if condition pre->right == NULL */
+		} /* End of if condition current->left == NULL*/
+	} /* End of while */
+}
+
+struct tNode* newtNode(int data)
+{
+	struct tNode* tNode = (struct tNode*)
+		malloc(sizeof(struct tNode));
+	tNode->data = data;
+	tNode->left = NULL;
+	tNode->right = NULL;
+
+	return(tNode);
+}
+
+/* 测试*/
+int main()
+{
+
+	/* 构建树结构如下：
+	1
+	/   \
+	2      3
+	/  \
+	4     5
+	*/
+	struct tNode *root = newtNode(1);
+	root->left = newtNode(2);
+	root->right = newtNode(3);
+	root->right->left = newtNode(7);
+	root->left->left = newtNode(4);
+	root->left->right = newtNode(5);
+	root->left->left->left = newtNode(6);
+
+	MorrisTraversal(root);
+	return 0;
+}
